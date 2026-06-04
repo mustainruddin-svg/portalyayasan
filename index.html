@@ -828,6 +828,8 @@ async function loadData() {
     const resp = await fetch(csvUrl);
     if (!resp.ok) throw new Error('Gagal mengambil data. Pastikan Sheet sudah di-share publik.');
     const text = await resp.text();
+    console.log('[Portal] Raw CSV length:', text.length);
+    console.log('[Portal] First 500 chars:', text.substring(0, 500));
     allData = parseCSV(text);
     renderAll();
     if (allData.length === 0) {
@@ -849,44 +851,63 @@ async function loadData() {
 }
 
 function parseCSV(text) {
-  // Parser CSV yang robust — handle koma dalam URL dan tanda kutip Google Sheets
-  function parseCSVLine(line) {
-    const result = [];
+  // Parser CSV RFC 4180 — handle koma dalam URL, newline dalam field, Windows CRLF
+  function parseAllCSV(str) {
+    const rows = [];
+    let row = [];
     let cur = '';
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') {
-        if (inQuotes && line[i+1] === '"') { cur += '"'; i++; }
-        else { inQuotes = !inQuotes; }
-      } else if (ch === ',' && !inQuotes) {
-        result.push(cur.trim());
-        cur = '';
+    let inQ = false;
+    // Normalize line endings
+    str = str.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    for (let i = 0; i < str.length; i++) {
+      const c = str[i];
+      if (inQ) {
+        if (c === '"') {
+          if (str[i+1] === '"') { cur += '"'; i++; } // escaped quote
+          else { inQ = false; }
+        } else {
+          cur += c;
+        }
       } else {
-        cur += ch;
+        if (c === '"') {
+          inQ = true;
+        } else if (c === ',') {
+          row.push(cur.trim());
+          cur = '';
+        } else if (c === '\n') {
+          row.push(cur.trim());
+          cur = '';
+          if (row.some(r => r !== '')) rows.push(row);
+          row = [];
+        } else {
+          cur += c;
+        }
       }
     }
-    result.push(cur.trim());
-    return result;
+    // flush last
+    row.push(cur.trim());
+    if (row.some(r => r !== '')) rows.push(row);
+    return rows;
   }
 
-  const lines = text.trim().split('\n');
-  if (lines.length < 2) return [];
+  const all = parseAllCSV(text);
+  if (all.length < 2) return [];
+
   const rows = [];
-  for (let i = 1; i < lines.length; i++) {
-    if (!lines[i].trim()) continue; // skip baris kosong
-    const cols = parseCSVLine(lines[i]);
+  for (let i = 1; i < all.length; i++) {
+    const cols = all[i];
     const kategori  = cols[0] || '';
     const subfolder = cols[1] || '';
     const nama      = cols[2] || '';
     const link      = cols[3] || '';
     const jenis     = cols[4] || 'link';
     const ket       = cols[5] || '';
-    // Hanya tampilkan baris yang minimal punya Kategori dan Nama Dokumen
     if (kategori && nama) {
       rows.push({ kategori, subfolder, nama, link, jenis, keterangan: ket });
     }
   }
+  console.log('[Portal] Parsed', rows.length, 'rows from CSV');
+  console.log('[Portal] Sample:', rows.slice(0,3));
   return rows;
 }
 
