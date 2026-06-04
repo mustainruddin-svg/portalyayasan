@@ -849,21 +849,42 @@ async function loadData() {
 }
 
 function parseCSV(text) {
+  // Parser CSV yang robust — handle koma dalam URL dan tanda kutip Google Sheets
+  function parseCSVLine(line) {
+    const result = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i+1] === '"') { cur += '"'; i++; }
+        else { inQuotes = !inQuotes; }
+      } else if (ch === ',' && !inQuotes) {
+        result.push(cur.trim());
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+
   const lines = text.trim().split('\n');
   if (lines.length < 2) return [];
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
-    const cols = lines[i].match(/(".*?"|[^,]+)(?=,|$)/g) || [];
-    const clean = cols.map(c => c.replace(/^"|"$/g,'').trim());
-    if (clean[0] && clean[2] && clean[3]) {
-      rows.push({
-        kategori: clean[0] || '',
-        subfolder: clean[1] || '',
-        nama: clean[2] || '',
-        link: clean[3] || '',
-        jenis: clean[4] || 'link',
-        keterangan: clean[5] || ''
-      });
+    if (!lines[i].trim()) continue; // skip baris kosong
+    const cols = parseCSVLine(lines[i]);
+    const kategori  = cols[0] || '';
+    const subfolder = cols[1] || '';
+    const nama      = cols[2] || '';
+    const link      = cols[3] || '';
+    const jenis     = cols[4] || 'link';
+    const ket       = cols[5] || '';
+    // Hanya tampilkan baris yang minimal punya Kategori dan Nama Dokumen
+    if (kategori && nama) {
+      rows.push({ kategori, subfolder, nama, link, jenis, keterangan: ket });
     }
   }
   return rows;
@@ -977,11 +998,22 @@ function buildFileItem(item) {
   const el = document.createElement('div');
   el.className = 'file-item';
 
+  // Normalisasi alias jenis dari Sheet
+  const jenisAlias = {
+    'folder':'gdrive', 'drive':'gdrive', 'gdrive':'gdrive',
+    'gdoc':'gdoc', 'doc':'gdoc', 'word':'gdoc',
+    'gsheet':'gsheet', 'gspread':'gsheet', 'sheet':'gsheet', 'excel':'gsheet', 'spreadsheet':'gsheet',
+    'gslide':'gslide', 'slide':'gslide', 'ppt':'gslide', 'slides':'gslide',
+    'pdf':'pdf',
+    'video':'video', 'vid':'video', 'youtube':'video',
+    'link':'link', 'url':'link'
+  };
   const labels = {
     gdoc:'DOC', gsheet:'XLS', gslide:'PPT', pdf:'PDF',
     gdrive:'DRV', video:'VID', link:'URL', other:'FILE'
   };
-  const cls = item.jenis in labels ? item.jenis : 'other';
+  const rawJenis = (item.jenis || '').toLowerCase().trim();
+  const cls = jenisAlias[rawJenis] || 'other';
   const label = labels[cls] || 'FILE';
 
   el.innerHTML = `
@@ -1040,8 +1072,9 @@ function handleSearch(q) {
   const hl = t => t.replace(new RegExp(`(${val})`, 'gi'), '<mark>$1</mark>');
   resDiv.innerHTML = `<div class="search-result-header">Ditemukan ${results.length} dokumen untuk "<strong>${q}</strong>"</div>`;
   results.forEach(item => {
+    const jenisAlias2 = {'folder':'gdrive','drive':'gdrive','gdrive':'gdrive','gdoc':'gdoc','doc':'gdoc','gsheet':'gsheet','gspread':'gsheet','sheet':'gsheet','spreadsheet':'gsheet','gslide':'gslide','slide':'gslide','ppt':'gslide','pdf':'pdf','video':'video','vid':'video','link':'link','url':'link'};
     const labels = {gdoc:'DOC',gsheet:'XLS',gslide:'PPT',pdf:'PDF',gdrive:'DRV',video:'VID',link:'URL',other:'FILE'};
-    const cls = item.jenis in labels ? item.jenis : 'other';
+    const cls = jenisAlias2[(item.jenis||'').toLowerCase().trim()] || 'other';
     resDiv.innerHTML += `
       <div class="search-result-item">
         <div class="search-breadcrumb">
