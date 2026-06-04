@@ -794,7 +794,7 @@
 const SHEET_ID = '1b8dYktixGxEGf31rGfnX86IZ5nTRO6mvc9eDeZg2m18';
 const SHEET_NAME = 'Dokumen';
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyh_vA7WMfKt2BUpoPv9aRE3OYG_n1r5mDRo_0KAbEJXl98Ks912rq6tfU8JTIVNqlwHA/exec';
-const ADMIN_PIN = '098765'; // Ganti PIN ini!
+const ADMIN_PIN = '098765';
 
 // ═══════════════════════════════════════════════
 // DATA STRUKTUR (fallback/demo jika Sheet belum diisi)
@@ -826,25 +826,24 @@ async function loadData() {
   try {
     const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
     const resp = await fetch(csvUrl);
-    if (!resp.ok) throw new Error('Gagal mengambil data');
+    if (!resp.ok) throw new Error('Gagal mengambil data. Pastikan Sheet sudah di-share publik.');
     const text = await resp.text();
     allData = parseCSV(text);
-    if (allData.length === 0) useDemoData();
     renderAll();
-    setStatus('ok', `Data berhasil dimuat — ${allData.length} dokumen tersedia`);
+    if (allData.length === 0) {
+      setStatus('ok', 'Sheet terhubung — belum ada dokumen yang ditambahkan.');
+    } else {
+      setStatus('ok', `Data berhasil dimuat — ${allData.length} dokumen tersedia`);
+    }
     document.getElementById('statsBar').style.display = 'flex';
     document.getElementById('sectionNav').style.display = 'flex';
     document.getElementById('statTotal').textContent = allData.length;
     document.getElementById('statUpdated').textContent = new Date().toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
     updateTabCounts();
   } catch(e) {
-    useDemoData();
-    renderAll();
-    setStatus('ok', `Mode demo aktif — ${allData.length} dokumen contoh ditampilkan`);
+    setStatus('error', `Gagal memuat: ${e.message}`);
     document.getElementById('statsBar').style.display = 'flex';
     document.getElementById('sectionNav').style.display = 'flex';
-    document.getElementById('statTotal').textContent = allData.length;
-    document.getElementById('statUpdated').textContent = 'Demo';
     updateTabCounts();
   }
 }
@@ -870,34 +869,7 @@ function parseCSV(text) {
   return rows;
 }
 
-function useDemoData() {
-  allData = [
-    // AGENDA / KEGIATAN
-    {kategori:'AGENDA / KEGIATAN', subfolder:'RAPAT', nama:'Notulen Rapat Januari 2025', link:'#', jenis:'gdoc', keterangan:'Notulen resmi'},
-    {kategori:'AGENDA / KEGIATAN', subfolder:'RAPAT', nama:'Jadwal Rapat Semester I 2025', link:'#', jenis:'gsheet', keterangan:''},
-    {kategori:'AGENDA / KEGIATAN', subfolder:'SOP', nama:'SOP Perlindungan Anak', link:'#', jenis:'pdf', keterangan:'Versi terbaru'},
-    {kategori:'AGENDA / KEGIATAN', subfolder:'SOP', nama:'SOP Perlindungan Guru', link:'#', jenis:'pdf', keterangan:''},
-    {kategori:'AGENDA / KEGIATAN', subfolder:'SPMB 2026', nama:'Form Pendaftaran SPMB 2026', link:'#', jenis:'gsheet', keterangan:''},
-    {kategori:'AGENDA / KEGIATAN', subfolder:'SPMB 2026', nama:'Panduan SPMB 2026', link:'#', jenis:'gdoc', keterangan:''},
-    {kategori:'AGENDA / KEGIATAN', subfolder:'PELATIHAN GURU', nama:'Materi Smart Teacher Bootcamp', link:'#', jenis:'gslide', keterangan:'Juni 2026'},
-    {kategori:'AGENDA / KEGIATAN', subfolder:'STUDI TIRU', nama:'Laporan Benchmarking Al-Hikmah Malang', link:'#', jenis:'gdoc', keterangan:''},
-    {kategori:'AGENDA / KEGIATAN', subfolder:'EVALUASI', nama:'Dashboard KPI 2025-2026', link:'#', jenis:'gsheet', keterangan:''},
-    // BIDANG/DIVISI
-    {kategori:'BIDANG/DIVISI', subfolder:'DIR. PENDIDIKAN', nama:'Kurikulum SDIT Ar-Rahmah 2025', link:'#', jenis:'gdoc', keterangan:''},
-    {kategori:'BIDANG/DIVISI', subfolder:'DIR. PENDIDIKAN', nama:'Jadwal Pelajaran Semester Genap', link:'#', jenis:'gsheet', keterangan:''},
-    {kategori:'BIDANG/DIVISI', subfolder:'DIR. OPERASIONAL', nama:'Laporan Keuangan Bulanan', link:'#', jenis:'gsheet', keterangan:'Mei 2025'},
-    {kategori:'BIDANG/DIVISI', subfolder:'DIR. OPERASIONAL', nama:'Inventaris Sarana Prasarana', link:'#', jenis:'gsheet', keterangan:''},
-    {kategori:'BIDANG/DIVISI', subfolder:'DIR.SDM', nama:'Database Guru & Karyawan', link:'#', jenis:'gsheet', keterangan:'Rahasia'},
-    {kategori:'BIDANG/DIVISI', subfolder:'SEKRETARIS', nama:'Surat Keputusan Pengurus 2025', link:'#', jenis:'gdoc', keterangan:''},
-    {kategori:'BIDANG/DIVISI', subfolder:'SEKRETARIS', nama:'Template Surat Resmi Yayasan', link:'#', jenis:'gdoc', keterangan:''},
-    {kategori:'BIDANG/DIVISI', subfolder:'DIR. SOSIAL', nama:'Laporan ArRahmah Care Qurban 1447H', link:'#', jenis:'gdoc', keterangan:''},
-    // DOKUMENTASI
-    {kategori:'DOKUMENTASI', subfolder:'Gambar', nama:'Foto Wisuda SDIT 2025', link:'#', jenis:'gdrive', keterangan:''},
-    {kategori:'DOKUMENTASI', subfolder:'Gambar', nama:'Foto Kegiatan PAUD 2025', link:'#', jenis:'gdrive', keterangan:''},
-    {kategori:'DOKUMENTASI', subfolder:'Juli 2025 - Raker', nama:'Dokumentasi Raker Juli 2025', link:'#', jenis:'gdrive', keterangan:''},
-    {kategori:'DOKUMENTASI', subfolder:'Juli 2025 - Raker', nama:'Presentasi Raker Pengurus', link:'#', jenis:'gslide', keterangan:''},
-  ];
-}
+// useDemoData dihapus — portal hanya menampilkan data real dari Google Sheets
 
 // ── RENDER ──
 function renderAll() {
