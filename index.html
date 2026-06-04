@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Dokumen Internal — Yayasan Ar-Rahmah Sulawesi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;1,400&display=swap');
+
+  :root {
+    --primary: #00A8E8;
+    --primary-dark: #0086BA;
+    --primary-light: #E6F6FD;
+    --gold: #C9A84C;
+    --gold-light: #FBF4E3;
+    --white: #FFFFFF;
+    --surface: #F7FAFC;
+    --border: #E2EBF0;
+    --text-main: #1A2B3C;
+    --text-sub: #4A6070;
+    --text-muted: #8FA5B5;
+    --danger: #D84040;
+    --success: #1A9E6A;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --shadow: 0 2px 12px rgba(0,168,232,0.08);
+    --shadow-hover: 0 8px 28px rgba(0,168,232,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #EEF4F8;
+    color: var(--text-main);
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topbar-logo {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .topbar-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .topbar-sub {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-admin {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-admin:hover { background: var(--primary-dark); }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text-sub);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -60px;
+    width: 220px; height: 220px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -40px;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.9);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    font-size: 14.5px;
+    color: rgba(255,255,255,0.75);
+    max-width: 480px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    max-width: 520px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .search-wrap svg.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    width: 18px;
+    height: 18px;
+  }
+  #searchInput {
+    width: 100%;
+    padding: 13px 14px 13px 44px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14.5px;
+    font-family: inherit;
+    background: white;
+    color: var(--text-main);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    outline: none;
+    transition: box-shadow 0.2s;
+  }
+  #searchInput:focus { box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+  #searchInput::placeholder { color: var(--text-muted); }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat-pill strong { color: var(--primary); font-weight: 600; }
+  .stat-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); display: inline-block; }
+
+  /* ── SECTION TABS ── */
+  .section-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--text-sub);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .tab-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .tab-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+  .tab-count {
+    background: rgba(255,255,255,0.25);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tab-btn:not(.active) .tab-count {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  /* ── CATEGORY SECTION ── */
+  .category-section { margin-bottom: 2.5rem; }
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+  .cat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cat-icon svg { width: 18px; height: 18px; }
+  .cat-icon.agenda { background: var(--primary-light); color: var(--primary); }
+  .cat-icon.bidang { background: var(--gold-light); color: var(--gold); }
+  .cat-icon.dokumentasi { background: #F0F4FF; color: #5A70C0; }
+  .cat-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .cat-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .cat-count-badge {
+    margin-left: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub);
+  }
+
+  /* ── SUB-FOLDER ACCORDION ── */
+  .subfolder-wrap { margin-bottom: 10px; }
+  .subfolder-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.18s;
+    text-align: left;
+  }
+  .subfolder-toggle:hover { border-color: var(--primary); background: var(--primary-light); }
+  .subfolder-toggle.open { border-radius: var(--radius-md) var(--radius-md) 0 0; border-bottom-color: transparent; background: var(--primary-light); border-color: var(--primary); }
+  .folder-emoji { font-size: 17px; }
+  .subfolder-name { font-size: 14px; font-weight: 600; color: var(--text-main); flex: 1; }
+  .subfolder-count { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .subfolder-arrow {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    transition: transform 0.25s;
+  }
+  .subfolder-toggle.open .subfolder-arrow { transform: rotate(180deg); }
+
+  .subfolder-content {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--primary);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    overflow: hidden;
+  }
+  .subfolder-content.open { display: block; }
+
+  /* ── FILE ITEMS ── */
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .file-item:last-child { border-bottom: none; }
+  .file-item:hover { background: #F7FCFF; }
+  .file-type-badge {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .badge-gdoc { background: #E8F0FE; color: #1a73e8; }
+  .badge-gsheet { background: #E6F4EA; color: #137333; }
+  .badge-gslide { background: #FCE8E6; color: #c5221f; }
+  .badge-pdf { background: #FDECEA; color: #b31412; }
+  .badge-gdrive { background: var(--primary-light); color: var(--primary); }
+  .badge-link { background: #F3E8FD; color: #7B2FF7; }
+  .badge-video { background: #FEF0E6; color: #e37400; }
+  .badge-other { background: var(--surface); color: var(--text-muted); }
+
+  .file-info { flex: 1; min-width: 0; }
+  .file-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .file-meta {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .file-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .btn-open {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn-open:hover { background: var(--primary-dark); }
+  .btn-copy {
+    background: var(--surface);
+    color: var(--text-sub);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-copy:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* ── EMPTY STATE ── */
+  .empty-subfolder {
+    padding: 20px 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* ── LOADING & STATUS ── */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 16px;
+    margin-bottom: 1.5rem;
+    font-size: 13px;
+    color: var(--text-sub);
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+  }
+  .status-dot.loading { background: var(--gold); }
+  .status-dot.ok { background: var(--success); animation: none; }
+  .status-dot.error { background: var(--danger); animation: none; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── SEARCH RESULTS ── */
+  #searchResults {
+    display: none;
+    margin-bottom: 2rem;
+  }
+  .search-result-header {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .search-result-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .search-breadcrumb {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 6px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  mark { background: #FFF3B0; color: var(--text-main); border-radius: 2px; padding: 0 2px; }
+
+  /* ── ADMIN MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,30,50,0.55);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 0;
+    width: 92%;
+    max-width: 460px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn { from{transform:scale(0.94);opacity:0} to{transform:scale(1);opacity:1} }
+  .modal-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    padding: 20px 24px;
+    color: white;
+  }
+  .modal-header h3 { font-size: 17px; font-weight: 700; }
+  .modal-header p { font-size: 12.5px; opacity: 0.8; margin-top: 3px; }
+  .modal-body { padding: 24px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--text-sub); margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--text-main);
+    background: var(--surface);
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  .form-input:focus { border-color: var(--primary); background: var(--white); }
+  .form-select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--text-main);
+    background: var(--surface);
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+  }
+  .form-select:focus { border-color: var(--primary); }
+  .modal-footer {
+    display: flex;
+    gap: 10px;
+    padding: 0 24px 24px;
+  }
+  .btn-cancel {
+    flex: 1;
+    padding: 11px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--text-sub);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-save {
+    flex: 2;
+    padding: 11px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.18s;
+  }
+  .btn-save:hover { background: var(--primary-dark); }
+  .pin-group { display: flex; gap: 8px; }
+  .pin-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 18px;
+    font-family: monospace;
+    letter-spacing: 6px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  .pin-input:focus { border-color: var(--primary); }
+  .pin-error { color: var(--danger); font-size: 12px; margin-top: 6px; display: none; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--text-main);
+    color: white;
+    border-radius: var(--radius-sm);
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.25s;
+    pointer-events: none;
+    max-width: 280px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── NO RESULT ── */
+  .no-result {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-muted);
+  }
+  .no-result svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
+  .no-result p { font-size: 14px; }
+
+  /* Scrollable category */
+  .cat-sections-wrap { }
+
+  @media (max-width: 640px) {
+    .topbar { padding: 0 1rem; }
+    .topbar-title { font-size: 13px; }
+    .hero { padding: 2rem 1rem 2rem; }
+    .hero h1 { font-size: 22px; }
+    .main { padding: 1.25rem 1rem 3rem; }
+    .file-actions .btn-copy { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">AR</div>
+    <div>
+      <div class="topbar-title">Portal Dokumen Internal</div>
+      <div class="topbar-sub">Yayasan Ar-Rahmah Sulawesi</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-secondary" onclick="refreshData()">⟳ Perbarui</button>
+    <button class="btn-admin" onclick="openAdminModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Admin
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">📁 Pusat Dokumen Resmi Yayasan</div>
+  <h1>Temukan Dokumen<br>dengan Cepat & Mudah</h1>
+  <p>Semua file, folder, dan tautan penting tersentralisasi di sini. Cukup ketik nama dokumen yang kamu cari.</p>
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="Cari nama dokumen, folder, atau bidang..." oninput="handleSearch(this.value)" />
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- Status -->
+  <div class="status-bar" id="statusBar">
+    <div class="status-dot loading" id="statusDot"></div>
+    <span id="statusText">Memuat data dari Google Sheets…</span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar" style="display:none">
+    <div class="stat-pill"><span class="stat-dot"></span> Total file: <strong id="statTotal">0</strong></div>
+    <div class="stat-pill">📁 Kategori: <strong>3</strong></div>
+    <div class="stat-pill">🕐 Diperbarui: <strong id="statUpdated">—</strong></div>
+  </div>
+
+  <!-- Section Tabs -->
+  <div class="section-nav" id="sectionNav" style="display:none">
+    <button class="tab-btn active" onclick="filterTab('all', this)">
+      Semua <span class="tab-count" id="tabAll">0</span>
+    </button>
+    <button class="tab-btn" onclick="filterTab('AGENDA / KEGIATAN', this)">
+      📅 Agenda &amp; Kegiatan <span class="tab-count" id="tabAgenda">0</span>
+    </button>
+    <button class="tab-btn" onclick="filterTab('BIDANG/DIVISI', this)">
+      🏢 Bidang / Divisi <span class="tab-count" id="tabBidang">0</span>
+    </button>
+    <button class="tab-btn" onclick="filterTab('DOKUMENTASI', this)">
+      📷 Dokumentasi <span class="tab-count" id="tabDok">0</span>
+    </button>
+  </div>
+
+  <!-- Search Results -->
+  <div id="searchResults"></div>
+
+  <!-- Category Sections -->
+  <div id="catSections" class="cat-sections-wrap"></div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🔐 Panel Admin</h3>
+      <p>Kelola dokumen — hanya untuk pengurus yang berwenang</p>
+    </div>
+    <div class="modal-body">
+      <!-- PIN step -->
+      <div id="pinStep">
+        <div class="form-group">
+          <label class="form-label">Masukkan PIN Admin</label>
+          <input type="password" class="pin-input" id="pinInput" placeholder="••••" maxlength="6" onkeydown="if(event.key==='Enter')checkPin()" />
+          <div class="pin-error" id="pinError">PIN salah. Coba lagi.</div>
+        </div>
+        <div class="modal-footer" style="padding:0">
+          <button class="btn-cancel" onclick="closeAdminModal()">Batal</button>
+          <button class="btn-save" onclick="checkPin()">Masuk</button>
+        </div>
+      </div>
+      <!-- Form step -->
+      <div id="formStep" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Kategori Utama</label>
+          <select class="form-select" id="fKategori" onchange="updateSubKategori()">
+            <option value="">— Pilih kategori —</option>
+            <option value="AGENDA / KEGIATAN">📅 Agenda / Kegiatan</option>
+            <option value="BIDANG/DIVISI">🏢 Bidang / Divisi</option>
+            <option value="DOKUMENTASI">📷 Dokumentasi</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sub-Folder</label>
+          <input type="text" class="form-input" id="fSubfolder" placeholder="mis. RAPAT, DIR. PENDIDIKAN, Gambar…" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama Dokumen / File</label>
+          <input type="text" class="form-input" id="fNama" placeholder="mis. Notulen Rapat Juli 2025" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Link Google Drive / URL</label>
+          <input type="url" class="form-input" id="fLink" placeholder="https://drive.google.com/…" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Jenis File</label>
+          <select class="form-select" id="fJenis">
+            <option value="gdrive">Google Drive Folder</option>
+            <option value="gdoc">Google Docs</option>
+            <option value="gsheet">Google Sheets</option>
+            <option value="gslide">Google Slides</option>
+            <option value="pdf">PDF</option>
+            <option value="video">Video</option>
+            <option value="link">Link Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Keterangan (opsional)</label>
+          <input type="text" class="form-input" id="fKet" placeholder="mis. Dibuat Juli 2025, revisi terakhir oleh Sekretaris" />
+        </div>
+        <div id="saveStatus" style="font-size:13px;color:var(--text-muted);margin-bottom:8px;display:none"></div>
+      </div>
+    </div>
+    <div class="modal-footer" id="formFooter" style="display:none">
+      <button class="btn-cancel" onclick="closeAdminModal()">Tutup</button>
+      <button class="btn-save" onclick="saveEntry()">💾 Simpan ke Sheet</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// KONFIGURASI — ganti dengan ID Google Sheet Anda
+// ═══════════════════════════════════════════════
+const SHEET_ID = 'ISI_DENGAN_ID_GOOGLESHEET_ANDA';
+const SHEET_NAME = 'Dokumen';
+const GAS_URL = 'ISI_DENGAN_URL_GOOGLE_APPS_SCRIPT_ANDA';
+const ADMIN_PIN = '1234'; // Ganti PIN ini!
+
+// ═══════════════════════════════════════════════
+// DATA STRUKTUR (fallback/demo jika Sheet belum diisi)
+// ═══════════════════════════════════════════════
+const STRUCTURE = {
+  'AGENDA / KEGIATAN': {
+    icon: 'agenda',
+    desc: 'Folder agenda, kegiatan, dan program kerja yayasan',
+    subfolders: ['7 KAIH','BUKU PANDUAN','EVALUASI','KUANTA','PELATIHAN GURU','RAPAT','SOP','SPMB','SPMB 2026','STUDI TIRU']
+  },
+  'BIDANG/DIVISI': {
+    icon: 'bidang',
+    desc: 'Dokumen per bidang dan divisi pengurus yayasan',
+    subfolders: ['DIR. OPERASIONAL','DIR. PENDIDIKAN','DIR. SOSIAL','DIR.SDM','SEKRETARIS']
+  },
+  'DOKUMENTASI': {
+    icon: 'dokumentasi',
+    desc: 'Foto, video, dan dokumentasi kegiatan yayasan',
+    subfolders: ['Gambar','Juli 2025 - Raker']
+  }
+};
+
+let allData = [];
+let currentTab = 'all';
+
+// ── FETCH DATA ──
+async function loadData() {
+  setStatus('loading', 'Memuat data dari Google Sheets…');
+  try {
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+    const resp = await fetch(csvUrl);
+    if (!resp.ok) throw new Error('Gagal mengambil data');
+    const text = await resp.text();
+    allData = parseCSV(text);
+    if (allData.length === 0) useDemoData();
+    renderAll();
+    setStatus('ok', `Data berhasil dimuat — ${allData.length} dokumen tersedia`);
+    document.getElementById('statsBar').style.display = 'flex';
+    document.getElementById('sectionNav').style.display = 'flex';
+    document.getElementById('statTotal').textContent = allData.length;
+    document.getElementById('statUpdated').textContent = new Date().toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
+    updateTabCounts();
+  } catch(e) {
+    useDemoData();
+    renderAll();
+    setStatus('ok', `Mode demo aktif — ${allData.length} dokumen contoh ditampilkan`);
+    document.getElementById('statsBar').style.display = 'flex';
+    document.getElementById('sectionNav').style.display = 'flex';
+    document.getElementById('statTotal').textContent = allData.length;
+    document.getElementById('statUpdated').textContent = 'Demo';
+    updateTabCounts();
+  }
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].match(/(".*?"|[^,]+)(?=,|$)/g) || [];
+    const clean = cols.map(c => c.replace(/^"|"$/g,'').trim());
+    if (clean[0] && clean[2] && clean[3]) {
+      rows.push({
+        kategori: clean[0] || '',
+        subfolder: clean[1] || '',
+        nama: clean[2] || '',
+        link: clean[3] || '',
+        jenis: clean[4] || 'link',
+        keterangan: clean[5] || ''
+      });
+    }
+  }
+  return rows;
+}
+
+function useDemoData() {
+  allData = [
+    // AGENDA / KEGIATAN
+    {kategori:'AGENDA / KEGIATAN', subfolder:'RAPAT', nama:'Notulen Rapat Januari 2025', link:'#', jenis:'gdoc', keterangan:'Notulen resmi'},
+    {kategori:'AGENDA / KEGIATAN', subfolder:'RAPAT', nama:'Jadwal Rapat Semester I 2025', link:'#', jenis:'gsheet', keterangan:''},
+    {kategori:'AGENDA / KEGIATAN', subfolder:'SOP', nama:'SOP Perlindungan Anak', link:'#', jenis:'pdf', keterangan:'Versi terbaru'},
+    {kategori:'AGENDA / KEGIATAN', subfolder:'SOP', nama:'SOP Perlindungan Guru', link:'#', jenis:'pdf', keterangan:''},
+    {kategori:'AGENDA / KEGIATAN', subfolder:'SPMB 2026', nama:'Form Pendaftaran SPMB 2026', link:'#', jenis:'gsheet', keterangan:''},
+    {kategori:'AGENDA / KEGIATAN', subfolder:'SPMB 2026', nama:'Panduan SPMB 2026', link:'#', jenis:'gdoc', keterangan:''},
+    {kategori:'AGENDA / KEGIATAN', subfolder:'PELATIHAN GURU', nama:'Materi Smart Teacher Bootcamp', link:'#', jenis:'gslide', keterangan:'Juni 2026'},
+    {kategori:'AGENDA / KEGIATAN', subfolder:'STUDI TIRU', nama:'Laporan Benchmarking Al-Hikmah Malang', link:'#', jenis:'gdoc', keterangan:''},
+    {kategori:'AGENDA / KEGIATAN', subfolder:'EVALUASI', nama:'Dashboard KPI 2025-2026', link:'#', jenis:'gsheet', keterangan:''},
+    // BIDANG/DIVISI
+    {kategori:'BIDANG/DIVISI', subfolder:'DIR. PENDIDIKAN', nama:'Kurikulum SDIT Ar-Rahmah 2025', link:'#', jenis:'gdoc', keterangan:''},
+    {kategori:'BIDANG/DIVISI', subfolder:'DIR. PENDIDIKAN', nama:'Jadwal Pelajaran Semester Genap', link:'#', jenis:'gsheet', keterangan:''},
+    {kategori:'BIDANG/DIVISI', subfolder:'DIR. OPERASIONAL', nama:'Laporan Keuangan Bulanan', link:'#', jenis:'gsheet', keterangan:'Mei 2025'},
+    {kategori:'BIDANG/DIVISI', subfolder:'DIR. OPERASIONAL', nama:'Inventaris Sarana Prasarana', link:'#', jenis:'gsheet', keterangan:''},
+    {kategori:'BIDANG/DIVISI', subfolder:'DIR.SDM', nama:'Database Guru & Karyawan', link:'#', jenis:'gsheet', keterangan:'Rahasia'},
+    {kategori:'BIDANG/DIVISI', subfolder:'SEKRETARIS', nama:'Surat Keputusan Pengurus 2025', link:'#', jenis:'gdoc', keterangan:''},
+    {kategori:'BIDANG/DIVISI', subfolder:'SEKRETARIS', nama:'Template Surat Resmi Yayasan', link:'#', jenis:'gdoc', keterangan:''},
+    {kategori:'BIDANG/DIVISI', subfolder:'DIR. SOSIAL', nama:'Laporan ArRahmah Care Qurban 1447H', link:'#', jenis:'gdoc', keterangan:''},
+    // DOKUMENTASI
+    {kategori:'DOKUMENTASI', subfolder:'Gambar', nama:'Foto Wisuda SDIT 2025', link:'#', jenis:'gdrive', keterangan:''},
+    {kategori:'DOKUMENTASI', subfolder:'Gambar', nama:'Foto Kegiatan PAUD 2025', link:'#', jenis:'gdrive', keterangan:''},
+    {kategori:'DOKUMENTASI', subfolder:'Juli 2025 - Raker', nama:'Dokumentasi Raker Juli 2025', link:'#', jenis:'gdrive', keterangan:''},
+    {kategori:'DOKUMENTASI', subfolder:'Juli 2025 - Raker', nama:'Presentasi Raker Pengurus', link:'#', jenis:'gslide', keterangan:''},
+  ];
+}
+
+// ── RENDER ──
+function renderAll() {
+  const container = document.getElementById('catSections');
+  container.innerHTML = '';
+
+  const cats = Object.keys(STRUCTURE);
+  cats.forEach(cat => {
+    if (currentTab !== 'all' && currentTab !== cat) return;
+    const catData = allData.filter(d => d.kategori === cat);
+    container.appendChild(buildCatSection(cat, catData));
+  });
+}
+
+function buildCatSection(cat, data) {
+  const info = STRUCTURE[cat];
+  const sec = document.createElement('div');
+  sec.className = 'category-section';
+  sec.dataset.cat = cat;
+
+  // Header
+  const iconSVGs = {
+    agenda: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+    bidang: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+    dokumentasi: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`
+  };
+
+  sec.innerHTML = `
+    <div class="cat-header">
+      <div class="cat-icon ${info.icon}">${iconSVGs[info.icon]}</div>
+      <div>
+        <div class="cat-title">${cat}</div>
+        <div class="cat-desc">${info.desc}</div>
+      </div>
+      <div class="cat-count-badge">${data.length} file</div>
+    </div>
+    <div class="subfolders-container"></div>
+  `;
+
+  const subfoldersDiv = sec.querySelector('.subfolders-container');
+
+  // Group by subfolder
+  const grouped = {};
+  info.subfolders.forEach(sf => { grouped[sf] = []; });
+  data.forEach(item => {
+    if (!grouped[item.subfolder]) grouped[item.subfolder] = [];
+    grouped[item.subfolder].push(item);
+  });
+
+  // Also add any subfolders from data that aren't in the structure
+  data.forEach(item => {
+    if (!grouped[item.subfolder]) grouped[item.subfolder] = [];
+  });
+
+  Object.entries(grouped).forEach(([sf, items]) => {
+    subfoldersDiv.appendChild(buildSubfolder(sf, items));
+  });
+
+  return sec;
+}
+
+function buildSubfolder(name, items) {
+  const wrap = document.createElement('div');
+  wrap.className = 'subfolder-wrap';
+
+  const toggle = document.createElement('button');
+  toggle.className = 'subfolder-toggle';
+  toggle.innerHTML = `
+    <span class="folder-emoji">📁</span>
+    <span class="subfolder-name">${name}</span>
+    <span class="subfolder-count">${items.length} file</span>
+    <svg class="subfolder-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+  `;
+
+  const content = document.createElement('div');
+  content.className = 'subfolder-content';
+
+  if (items.length === 0) {
+    content.innerHTML = `<div class="empty-subfolder">📭 Belum ada file di folder ini</div>`;
+  } else {
+    items.forEach(item => {
+      content.appendChild(buildFileItem(item));
+    });
+  }
+
+  toggle.addEventListener('click', () => {
+    toggle.classList.toggle('open');
+    content.classList.toggle('open');
+  });
+
+  wrap.appendChild(toggle);
+  wrap.appendChild(content);
+  return wrap;
+}
+
+function buildFileItem(item) {
+  const el = document.createElement('div');
+  el.className = 'file-item';
+
+  const labels = {
+    gdoc:'DOC', gsheet:'XLS', gslide:'PPT', pdf:'PDF',
+    gdrive:'DRV', video:'VID', link:'URL', other:'FILE'
+  };
+  const cls = item.jenis in labels ? item.jenis : 'other';
+  const label = labels[cls] || 'FILE';
+
+  el.innerHTML = `
+    <div class="file-type-badge badge-${cls}">${label}</div>
+    <div class="file-info">
+      <div class="file-name">${item.nama}</div>
+      <div class="file-meta">${item.subfolder}${item.keterangan ? ' · ' + item.keterangan : ''}</div>
+    </div>
+    <div class="file-actions">
+      <a class="btn-open" href="${item.link}" target="_blank" rel="noopener">
+        Buka
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+      <button class="btn-copy" onclick="copyLink('${item.link.replace(/'/g,"\\'")}', this)" title="Salin tautan">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Salin
+      </button>
+    </div>
+  `;
+  return el;
+}
+
+// ── SEARCH ──
+function handleSearch(q) {
+  const val = q.trim().toLowerCase();
+  const resDiv = document.getElementById('searchResults');
+  const catDiv = document.getElementById('catSections');
+
+  if (!val) {
+    resDiv.style.display = 'none';
+    resDiv.innerHTML = '';
+    catDiv.style.display = '';
+    return;
+  }
+
+  catDiv.style.display = 'none';
+  resDiv.style.display = 'block';
+
+  const results = allData.filter(d =>
+    d.nama.toLowerCase().includes(val) ||
+    d.subfolder.toLowerCase().includes(val) ||
+    d.kategori.toLowerCase().includes(val) ||
+    d.keterangan.toLowerCase().includes(val)
+  );
+
+  if (results.length === 0) {
+    resDiv.innerHTML = `
+      <div class="no-result">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+        <p>Tidak ditemukan dokumen untuk "<strong>${q}</strong>"</p>
+      </div>
+    `;
+    return;
+  }
+
+  const hl = t => t.replace(new RegExp(`(${val})`, 'gi'), '<mark>$1</mark>');
+  resDiv.innerHTML = `<div class="search-result-header">Ditemukan ${results.length} dokumen untuk "<strong>${q}</strong>"</div>`;
+  results.forEach(item => {
+    const labels = {gdoc:'DOC',gsheet:'XLS',gslide:'PPT',pdf:'PDF',gdrive:'DRV',video:'VID',link:'URL',other:'FILE'};
+    const cls = item.jenis in labels ? item.jenis : 'other';
+    resDiv.innerHTML += `
+      <div class="search-result-item">
+        <div class="search-breadcrumb">
+          ${hl(item.kategori)} › ${hl(item.subfolder)}
+        </div>
+        <div class="file-item">
+          <div class="file-type-badge badge-${cls}">${labels[cls]||'FILE'}</div>
+          <div class="file-info">
+            <div class="file-name">${hl(item.nama)}</div>
+            <div class="file-meta">${item.keterangan ? hl(item.keterangan) : ''}</div>
+          </div>
+          <div class="file-actions">
+            <a class="btn-open" href="${item.link}" target="_blank" rel="noopener">Buka <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+            <button class="btn-copy" onclick="copyLink('${item.link.replace(/'/g,"\\'")}', this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ── TAB FILTER ──
+function filterTab(cat, btn) {
+  currentTab = cat;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchResults').style.display = 'none';
+  document.getElementById('catSections').style.display = '';
+  renderAll();
+}
+
+function updateTabCounts() {
+  document.getElementById('tabAll').textContent = allData.length;
+  document.getElementById('tabAgenda').textContent = allData.filter(d => d.kategori === 'AGENDA / KEGIATAN').length;
+  document.getElementById('tabBidang').textContent = allData.filter(d => d.kategori === 'BIDANG/DIVISI').length;
+  document.getElementById('tabDok').textContent = allData.filter(d => d.kategori === 'DOKUMENTASI').length;
+}
+
+// ── STATUS ──
+function setStatus(type, msg) {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'status-dot ' + type;
+  document.getElementById('statusText').textContent = msg;
+}
+
+// ── REFRESH ──
+function refreshData() { loadData(); }
+
+// ── COPY ──
+function copyLink(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('✅ Tautan berhasil disalin!');
+  });
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── ADMIN MODAL ──
+function openAdminModal() {
+  document.getElementById('adminModal').classList.add('open');
+  document.getElementById('pinStep').style.display = '';
+  document.getElementById('formStep').style.display = 'none';
+  document.getElementById('formFooter').style.display = 'none';
+  document.getElementById('pinInput').value = '';
+  document.getElementById('pinError').style.display = 'none';
+  setTimeout(() => document.getElementById('pinInput').focus(), 100);
+}
+
+function closeAdminModal() {
+  document.getElementById('adminModal').classList.remove('open');
+}
+
+function checkPin() {
+  const pin = document.getElementById('pinInput').value;
+  if (pin === ADMIN_PIN) {
+    document.getElementById('pinStep').style.display = 'none';
+    document.getElementById('formStep').style.display = '';
+    document.getElementById('formFooter').style.display = 'flex';
+    document.getElementById('pinError').style.display = 'none';
+  } else {
+    document.getElementById('pinError').style.display = 'block';
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinInput').focus();
+  }
+}
+
+function updateSubKategori() {
+  // Could add dynamic sub-folder suggestions based on category
+}
+
+async function saveEntry() {
+  const data = {
+    kategori: document.getElementById('fKategori').value,
+    subfolder: document.getElementById('fSubfolder').value.trim(),
+    nama: document.getElementById('fNama').value.trim(),
+    link: document.getElementById('fLink').value.trim(),
+    jenis: document.getElementById('fJenis').value,
+    keterangan: document.getElementById('fKet').value.trim(),
+    timestamp: new Date().toLocaleString('id-ID')
+  };
+
+  if (!data.kategori || !data.nama || !data.link) {
+    showToast('⚠️ Kategori, nama, dan link wajib diisi!');
+    return;
+  }
+
+  const saveStatus = document.getElementById('saveStatus');
+  saveStatus.style.display = 'block';
+  saveStatus.textContent = '⏳ Menyimpan ke Google Sheets…';
+
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    saveStatus.textContent = '✅ Berhasil disimpan!';
+    showToast('✅ Dokumen berhasil ditambahkan!');
+    // Clear form
+    ['fKategori','fSubfolder','fNama','fLink','fKet'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('fJenis').value = 'gdrive';
+    setTimeout(() => { saveStatus.style.display = 'none'; }, 3000);
+    setTimeout(() => refreshData(), 1500);
+  } catch(e) {
+    saveStatus.textContent = '❌ Gagal menyimpan. Periksa URL GAS.';
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('adminModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAdminModal();
+});
+
+// ── INIT ──
+loadData();
+</script>
+</body>
+</html>
