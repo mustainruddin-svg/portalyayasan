@@ -877,11 +877,20 @@ function renderAll() {
   container.innerHTML = '';
 
   const cats = Object.keys(STRUCTURE);
+  let rendered = 0;
   cats.forEach(cat => {
     if (currentTab !== 'all' && currentTab !== cat) return;
     const catData = allData.filter(d => d.kategori === cat);
+    if (currentTab === 'all' && catData.length === 0) return;
     container.appendChild(buildCatSection(cat, catData));
+    rendered++;
   });
+
+  if (rendered === 0 && allData.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:3rem 2rem;color:var(--text-muted);font-size:14px;">
+      📂 Belum ada dokumen tersedia. Admin dapat menambahkan melalui tombol <strong>Admin</strong> di atas.
+    </div>`;
+  }
 }
 
 function buildCatSection(cat, data) {
@@ -911,22 +920,21 @@ function buildCatSection(cat, data) {
 
   const subfoldersDiv = sec.querySelector('.subfolders-container');
 
-  // Group by subfolder
+  // Group by subfolder — hanya dari data real, subfolder kosong tidak ditampilkan
   const grouped = {};
-  info.subfolders.forEach(sf => { grouped[sf] = []; });
   data.forEach(item => {
-    if (!grouped[item.subfolder]) grouped[item.subfolder] = [];
-    grouped[item.subfolder].push(item);
+    const sf = item.subfolder || '(Tanpa Subfolder)';
+    if (!grouped[sf]) grouped[sf] = [];
+    grouped[sf].push(item);
   });
 
-  // Also add any subfolders from data that aren't in the structure
-  data.forEach(item => {
-    if (!grouped[item.subfolder]) grouped[item.subfolder] = [];
-  });
-
-  Object.entries(grouped).forEach(([sf, items]) => {
-    subfoldersDiv.appendChild(buildSubfolder(sf, items));
-  });
+  if (Object.keys(grouped).length === 0) {
+    subfoldersDiv.innerHTML = `<div style="padding:20px 16px;text-align:center;color:var(--text-muted);font-size:13px;">📭 Belum ada dokumen di kategori ini</div>`;
+  } else {
+    Object.entries(grouped).forEach(([sf, items]) => {
+      subfoldersDiv.appendChild(buildSubfolder(sf, items));
+    });
+  }
 
   return sec;
 }
