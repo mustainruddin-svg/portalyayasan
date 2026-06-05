@@ -836,15 +836,11 @@ async function loadData() {
         const resp = await fetch(csvUrl);
         if (resp.ok) {
           text = await resp.text();
-          console.log('[Portal] Fetched from:', csvUrl);
           fetchOk = true;
           break;
         }
-      } catch(fe) { console.warn('[Portal] URL failed:', csvUrl, fe); }
     }
     if (!fetchOk || !text) throw new Error('Gagal mengambil data. Pastikan Sheet sudah di-share publik (Anyone with link → Viewer).');
-    console.log('[Portal] Raw CSV length:', text.length);
-    console.log('[Portal] First 500 chars:', text.substring(0, 500));
     allData = parseCSV(text);
     renderAll();
     if (allData.length === 0) {
@@ -906,9 +902,6 @@ function parseCSV(text) {
   }
 
   const all = parseAllCSV(text);
-  console.log('[Portal] Total rows parsed (incl header):', all.length);
-  if (all.length > 0) console.log('[Portal] Header row:', all[0]);
-  if (all.length > 1) console.log('[Portal] Row 1:', all[1]);
   if (all.length < 2) return [];
 
   const rows = [];
@@ -924,8 +917,6 @@ function parseCSV(text) {
       rows.push({ kategori, subfolder, nama, link, jenis, keterangan: ket });
     }
   }
-  console.log('[Portal] Parsed', rows.length, 'rows from CSV');
-  console.log('[Portal] Sample:', rows.slice(0,3));
   return rows;
 }
 
