@@ -541,6 +541,13 @@
     transition: border-color 0.18s;
   }
   .form-input:focus { border-color: var(--primary); background: var(--white); }
+  .form-input.input-error { border-color: var(--danger); background: #FFF5F5; }
+  .field-hint {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 5px;
+  }
+  .field-hint.error { color: var(--danger); font-weight: 600; }
   .form-select {
     width: 100%;
     padding: 10px 14px;
@@ -756,7 +763,8 @@
         </div>
         <div class="form-group">
           <label class="form-label">Link Google Drive / URL</label>
-          <input type="url" class="form-input" id="fLink" placeholder="https://drive.google.com/…" />
+          <input type="text" class="form-input" id="fLink" placeholder="https://drive.google.com/… atau https://nama-app.vercel.app" oninput="validateLinkField()" onblur="validateLinkField(true)" />
+          <div class="field-hint" id="fLinkHint">Wajib diawali <strong>https://</strong> atau <strong>http://</strong> — kalau tidak, link akan rusak saat dibuka.</div>
         </div>
         <div class="form-group">
           <label class="form-label">Jenis File</label>
@@ -819,6 +827,25 @@ const STRUCTURE = {
 
 let allData = [];
 let currentTab = 'all';
+
+// ── LINK NORMALIZATION ──
+// Membetulkan link yang lupa diawali skema (http/https) supaya tidak
+// tergabung menjadi path relatif terhadap domain portal saat ini.
+// Sheet TIDAK diubah — normalisasi hanya terjadi saat render di browser.
+function normalizeLink(url) {
+  if (!url) return url;
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  // Link Drive/Docs kadang ditulis tanpa skema, mis. "drive.google.com/..."
+  if (/^(www\.|drive\.google\.com|docs\.google\.com|[a-z0-9-]+\.vercel\.app|[a-z0-9.-]+\.[a-z]{2,})/i.test(trimmed)) {
+    return 'https://' + trimmed;
+  }
+  return trimmed;
+}
+
+function escAttr(str) {
+  return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
 
 // ── FETCH DATA ──
 async function loadData() {
@@ -917,7 +944,7 @@ function parseCSV(text) {
     const kategori  = cols[0] || '';
     const subfolder = cols[1] || '';
     const nama      = cols[2] || '';
-    const link      = cols[3] || '';
+    const link      = normalizeLink(cols[3] || '');
     const jenis     = cols[4] || 'link';
     const ket       = cols[5] || '';
     if (kategori && nama) {
@@ -1066,7 +1093,7 @@ function buildFileItem(item) {
         Buka
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>
-      <button class="btn-copy" onclick="copyLink('${item.link.replace(/'/g,"\\'")}', this)" title="Salin tautan">
+      <button class="btn-copy" onclick="copyLink('${escAttr(item.link)}', this)" title="Salin tautan">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         Salin
       </button>
@@ -1127,7 +1154,7 @@ function handleSearch(q) {
           </div>
           <div class="file-actions">
             <a class="btn-open" href="${item.link}" target="_blank" rel="noopener">Buka <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-            <button class="btn-copy" onclick="copyLink('${item.link.replace(/'/g,"\\'")}', this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin</button>
+            <button class="btn-copy" onclick="copyLink('${escAttr(item.link)}', this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin</button>
           </div>
         </div>
       </div>
@@ -1211,12 +1238,49 @@ function updateSubKategori() {
   // Could add dynamic sub-folder suggestions based on category
 }
 
+// ── VALIDASI LINK DI FORM ADMIN ──
+// Memberi peringatan visual real-time jika admin lupa menulis skema (https://)
+// supaya kesalahan tidak terbawa sampai ke Sheet.
+function validateLinkField(blurred) {
+  const input = document.getElementById('fLink');
+  const hint = document.getElementById('fLinkHint');
+  const val = input.value.trim();
+
+  if (!val) {
+    input.classList.remove('input-error');
+    hint.classList.remove('error');
+    hint.innerHTML = 'Wajib diawali <strong>https://</strong> atau <strong>http://</strong> — kalau tidak, link akan rusak saat dibuka.';
+    return true;
+  }
+
+  const hasScheme = /^https?:\/\//i.test(val);
+  if (!hasScheme) {
+    input.classList.add('input-error');
+    hint.classList.add('error');
+    hint.innerHTML = `⚠️ Link belum diawali https:// — akan jadi: <code>${escAttr(window.location.origin + '/' + val)}</code>. Tambahkan https:// di depan.`;
+    return false;
+  }
+
+  input.classList.remove('input-error');
+  hint.classList.remove('error');
+  hint.innerHTML = '✅ Format link sudah benar.';
+  return true;
+}
+
 async function saveEntry() {
+  const linkVal = document.getElementById('fLink').value.trim();
+
+  if (!validateLinkField(true)) {
+    showToast('⚠️ Link harus diawali https:// — perbaiki dulu sebelum disimpan.');
+    document.getElementById('fLink').focus();
+    return;
+  }
+
   const data = {
     kategori: document.getElementById('fKategori').value,
     subfolder: document.getElementById('fSubfolder').value.trim(),
     nama: document.getElementById('fNama').value.trim(),
-    link: document.getElementById('fLink').value.trim(),
+    link: linkVal,
     jenis: document.getElementById('fJenis').value,
     keterangan: document.getElementById('fKet').value.trim(),
     timestamp: new Date().toLocaleString('id-ID')
@@ -1243,6 +1307,7 @@ async function saveEntry() {
     // Clear form
     ['fKategori','fSubfolder','fNama','fLink','fKet'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fJenis').value = 'gdrive';
+    validateLinkField();
     setTimeout(() => { saveStatus.style.display = 'none'; }, 3000);
     setTimeout(() => refreshData(), 1500);
   } catch(e) {
